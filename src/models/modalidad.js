@@ -7,7 +7,6 @@ const ModalidadSchema = new Schema({
   id: ObjectId,
   nombre: {
     type: String,
-    required: true,
     match: /[a-z]/,
   },
   categorias: {
