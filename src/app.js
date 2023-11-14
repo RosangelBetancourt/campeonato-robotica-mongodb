@@ -3,6 +3,8 @@ var path = require('path');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
+require('dotenv').config();
+require('./database/conexion')
 
 const modalidad = require('./routes/modalidad.routes')
 const categorias = require('./routes/categorias.routes')
