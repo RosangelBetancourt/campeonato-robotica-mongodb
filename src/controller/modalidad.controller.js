@@ -1,43 +1,73 @@
-const { modalidad } = require('../data/data');
+const ModalidadModel = require('../models/modalidad');
 const { v4: uuidv4 } = require('uuid');
 
 class Modalidad {
 
-    agregar(modal){
-        return new Promise ((resolve, reject) => {
-            if (!modal.nombre) {
-                reject('Faltan propiedades escenciales: Codigo o Nombre')
-            } else {
-                let nulo = false
-
-                for (let i = 0; i < modalidad.length; i++) {
-                    if (modalidad[i].nombre == modal.nombre) {
-                        nulo = true
-                    }
-                }
-
-                if (nulo) {
-                    reject('Ya existe una modalidad con ese nombre')
-                }
-
-                const nuevaModalidad = {
-                    id: uuidv4(),
-                    nombre: modal.nombre,
-                    categorias: []
-                }
+    agregar(modal) {
+        return new Promise(async (resolve, reject) => {
+            try {
+                if (!modal.nombre) {
+                    reject('Faltan propiedades escenciales: Codigo o Nombre')
+                } else {
+                    //validamos que no exista otra modalidad con el mismo nombre
+                    const existeModalidad = await ModalidadModel.findOne({
+                        nombre: modal.nombre
+                    })
     
-                modalidad.push(nuevaModalidad);
-                resolve('Se ha agregado exitosamente la cuenta')
+                    if (existeModalidad) {
+                        return reject({
+                            ok: false,
+                            mensaje: 'Ya existe una modalidad con ese nombre',
+                        })
+                    }
+    
+                    const nuevaModalidad = {
+                        nombre: modal.nombre
+                    }
+    
+                    const modalidadCreada = await ModalidadModel.create(
+                        nuevaModalidad
+                    )
+        
+                    if (!modalidadCreada) {
+                        return reject({
+                            ok: false,
+                            mensaje: 'Hubo un error al crear la nueva Modalidad',
+                        })
+                    }
+                    resolve({
+                        ok: true,
+                        Modalidad: modalidadCreada,
+                    })
+                }
+            } catch (error) {
+                console.error('Error al agregar las Modalidades:', error)
+                return resolve({
+                    ok: false,
+                    mensaje: 'Hubo un error al agregar la modalidade',
+                })
             }
         })
     }
 
-    listar(){
-        
-        return new Promise ((resolve, reject) => {
-            const resultado = modalidad
+    listar() {
 
-            resolve(resultado);
+        return new Promise(async (resolve, reject) => {
+            try {
+                const totalModalidades = await ModalidadModel.find().select(
+                    '_id nombre categorias'
+                )
+                return resolve({
+                    ok: true,
+                    totalModalidades
+                })
+            } catch (error) {
+                console.error('Error al mostrar las Modalidades:', error)
+                return resolve({
+                    ok: false,
+                    mensaje: 'Hubo un error al mostrar las modalidades',
+                })
+            }
         })
     }
 }

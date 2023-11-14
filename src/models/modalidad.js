@@ -16,5 +16,5 @@ const ModalidadSchema = new Schema({
   }
 });
 
-const ModalidadModel = mongoose.model('modalidad', ModalidadSchema)
+const ModalidadModel = mongoose.model('modalidades', ModalidadSchema)
 module.exports = ModalidadModel
