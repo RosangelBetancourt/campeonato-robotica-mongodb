@@ -68,7 +68,7 @@ router.delete('/anular/:id', function (req, res, next) {
 
     const { id } = req.params
 
-    Equipos.eliminar(req.body, id)
+    Equipos.eliminarCategoria(req.body, id)
     .then((resultado) => {
         res.status(200).json({status: 200, mensaje: resultado})
     })

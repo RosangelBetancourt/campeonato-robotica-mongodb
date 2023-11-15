@@ -7,13 +7,10 @@ const EquiposSchema = new Schema({
   id: ObjectId,
   nombre: {
     type: String,
-    required: true,
     match: /[a-z]/,
   },
   miembros: {
-    type: Array,
-    default: [],
-    required: true
+    type: Array
   },
   categorias_inscritas: {
     type: Array,
