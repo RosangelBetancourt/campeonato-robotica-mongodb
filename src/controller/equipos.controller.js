@@ -43,6 +43,42 @@ class Equipo {
         })
     }
 
+    agregarCategoria(equipo, id) {
+        return new Promise(async (resolve, reject) => {
+            if (!equipo.categoria) {
+                reject('Faltan propiedades escenciales: categoria')
+            } else {
+                const equipoBuscado = await EquiposModel.findOne({ _id: id })
+
+                if (!equipoBuscado) {
+                    return reject({
+                        ok: false,
+                        mensaje: 'Hubo un error al agregar la categoria del equipo',
+                    })
+                }
+
+                const categoriaBuscada = await CategoriasModel.findOne({ nombre: equipo.categoria })
+
+                if (!categoriaBuscada) {
+                    return reject({
+                        ok: false,
+                        mensaje: 'Hubo un error al agregar la categoria del equipo porque no existe la categoria',
+                    })
+                }
+
+                equipoBuscado.categorias_inscritas.push(equipo.categoria)
+                await EquiposModel.updateOne({ _id: id }, { $set: { categorias_inscritas: equipoBuscado.categorias_inscritas } })
+                await CategoriasModel.updateOne({ nombre: equipo.categoria }, { $set: { equipos_participantes: equipoBuscado.categorias_inscritas } })
+
+                return resolve({
+                    ok: true,
+                    equipoBuscado,
+                    mensaje: "Categoria agregada al equipo exitosamente"
+                })
+            }
+        })
+    }
+
     listar() {
         return new Promise(async (resolve, reject) => {
             try {

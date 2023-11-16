@@ -35,6 +35,20 @@ router.post('/agregar', function (req, res, next) {
     })
 })
 
+/* Agregar Categoria al Equipos Participantes */
+router.post('/agregar/categoria/:id', function (req, res, next) {
+
+    const { id } = req.params
+
+    Equipos.agregarCategoria(req.body, id)
+    .then((resultado) => {
+        res.status(200).json({status: 200, mensaje: resultado})
+    })
+    .catch((error) => {
+        res.status(400).json({status: 400, mensaje: "No se ha podido agregar el equipo participante", error: error})
+    })
+})
+
 /* Editar Equipos Participantes */
 router.put('/editar/:id', function (req, res, next) {
 

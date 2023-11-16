@@ -1,5 +1,6 @@
 const PatrocinantesModel = require('../models//patrocinantes');
 const ModalidadModel = require('../models/modalidad');
+const mongoose = require('mongoose')
 
 class Patrocinantes {
 
@@ -30,7 +31,7 @@ class Patrocinantes {
                     const patrocinanteCreado = await PatrocinantesModel.create(
                         nuevoPatrocinante
                     )
-        
+
                     if (!patrocinanteCreado) {
                         return reject({
                             ok: false,
@@ -53,7 +54,7 @@ class Patrocinantes {
     }
 
     listar() {
-        return new Promise( async (resolve, reject) => {
+        return new Promise(async (resolve, reject) => {
             try {
                 const totalPatrocinantes = await PatrocinantesModel.find().select(
                     '_id nombre rif modalidad_patrocinada'
@@ -71,6 +72,77 @@ class Patrocinantes {
             }
         })
     }
+
+    //Nueva funcionalidad o EndPoint
+    editar(patrocinante, id) {
+        return new Promise(async (resolve, reject) => {
+            try {
+                if (!patrocinante.nombre || !patrocinante.rif) {
+                    reject('Faltan propiedades escenciales: nombre y rif')
+                }
+
+                //Actualizaremos los datos del patrocinador
+                const edicionPatrocinador = { nombre: patrocinante.nombre, rif: patrocinante.rif };
+                const patrotinanteEditado = await PatrocinantesModel.updateOne({ _id: id }, { $set: edicionPatrocinador })
+
+                if (!patrotinanteEditado) {
+                    return reject({
+                        ok: false,
+                        mensaje: 'Hubo un error al editar el Patrocinante',
+                    })
+                }
+
+                return resolve({
+                    ok: true,
+                    mensaje: 'Patrocinante editado',
+                    patrotinanteEditado: patrotinanteEditado,
+                })
+            } catch (error) {
+                console.error('Error al editar los Patrocinantes:', error)
+                return reject({
+                    ok: false,
+                    mensaje: 'Hubo un error al editar el Patrocinante',
+                })
+            }
+        })
+    }
+
+    eliminar(id) {
+        return new Promise(async (resolve, reject) => {
+            try {
+                //validacion del ID para que sea como el ID de Mongoose
+                if (!mongoose.isValidObjectId(id)) {
+                    return reject({
+                        ok: false,
+                        mensaje: 'ID no válido',
+                    })
+                }
+
+                // Eliminamos el Patrocinador seleccionado
+                const patrocinanteEliminado = await PatrocinantesModel.findByIdAndDelete(id)
+                if (!patrocinanteEliminado) {
+                    return reject({
+                        ok: false,
+                        mensaje: 'Hubo un error al eliminar el Patrocinador',
+                    })
+                }
+
+                return resolve({
+                    ok: true,
+                    patrocinanteEliminado,
+                    mensaje: 'Patrocinante eliminado',
+                })
+            } catch (error) {
+                console.error('Error al eliminar el Patrocinador:', error)
+                return reject({
+                    ok: false,
+                    mensaje: 'Hubo un error al eliminar el Patrocinador',
+                })
+            }
+        })
+    }
+
+
 }
 
 const patrocinantesC = new Patrocinantes();

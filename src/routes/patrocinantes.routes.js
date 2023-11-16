@@ -24,5 +24,32 @@ router.post('/agregar', function (req, res, next) {
     })
 })
 
+/* Editar patrocinantes */
+//Nueva funcionalidad o EndPoint
+router.put('/editar/:id', function (req, res, next) {
+    const { id } = req.params
+
+    Patrocinantes.editar(req.body, id)
+    .then((resultado) => {
+        res.status(200).json({status: 200, mensaje: resultado})
+    })
+    .catch((error) => {
+        res.status(400).json({status: 400, mensaje: "no se ha podido editar el patrocinante", error: error})
+    })
+})
+
+/* Eliminar Patrocinandor */
+router.delete('/eliminar/:id', function (req, res, next) {
+
+    const { id } = req.params
+
+    Patrocinantes.eliminar(id)
+    .then((resultado) => {
+        res.status(200).json({status: 200, mensaje: resultado})
+    })
+    .catch((error) => {
+        res.status(400).json({status: 400, mensaje: 'No se pudo eliminar el Patrocinador', error: error})
+    })
+})
 
 module.exports = router;
