@@ -7,18 +7,14 @@ const CategoriasSchema = new Schema({
   id: ObjectId,
   nombre: {
     type: String,
-    required: true,
     match: /[a-z]/,
   },
   tipo_de_robot: {
     type: String,
-    required: true,
     match: /[a-z]/,
   },
   premio: {
     type: String,
-    required: true,
-    match: /[a-z]/
   },
   equipos_participantes: {
     type: Array,
@@ -26,7 +22,6 @@ const CategoriasSchema = new Schema({
   },
   modalidad: {
     type: String,
-    required: true,
     match: /[a-z]/
   }
 

@@ -1,6 +1,5 @@
 const PatrocinantesModel = require('../models//patrocinantes');
 const ModalidadModel = require('../models/modalidad');
-const { v4: uuidv4 } = require('uuid');
 
 class Patrocinantes {
 

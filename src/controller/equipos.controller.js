@@ -1,6 +1,5 @@
-const { equipos, categorias } = require('../data/data');
 const EquiposModel = require('../models/equipos');
-const { v4: uuidv4 } = require('uuid');
+const CategoriasModel = require('../models/categorias');
 
 class Equipo {
 
@@ -65,19 +64,34 @@ class Equipo {
     }
 
     listarPorCategoria() {
-        return new Promise((resolve, reject) => {
-            const resultado = [];
+        return new Promise( async (resolve, reject) => {
+            try {
+                const resultado = []
 
-            for (let i = 0; i < categorias.length; i++) {
-                const equiposInscritos = categorias[i].equipos_participantes;
+                const categorias = await CategoriasModel.find().select(
+                    '_id nombre tipo_de_robot premio equipos_participantes modalidad'
+                )
+                
+                for (let i = 0; i < categorias.length; i++) {
+                    const equiposInscritos = categorias[i].equipos_participantes;
+    
+                    resultado.push({
+                        categoria: categorias[i].nombre,
+                        equiposInscritos: equiposInscritos
+                    })
+                }
 
-                resultado.push({
-                    categoria: categorias[i].nombre,
-                    equiposInscritos: equiposInscritos
+                resolve({
+                    ok: true,
+                    Equipos_por_Categoria: resultado
+                })
+            } catch (error) {
+                console.error('Error al mostrar los Equipos:', error)
+                return reject({
+                    ok: false,
+                    mensaje: 'Hubo un error al mostrar los Equipos',
                 })
             }
-
-            resolve(resultado);
         })
     }
 
@@ -115,68 +129,113 @@ class Equipo {
     }
 
     eliminar(id) {
-        return new Promise((resolve, reject) => {
+        return new Promise( async (resolve, reject) => {
+            try {
+                const equipoBuscado = await EquiposModel.findOne({ _id: id })
 
-            let nombre_equipo = ''
+                if (!equipoBuscado) {
+                    return reject({
+                        ok: false,
+                        mensaje: 'Hubo un error al eliminar el equipo porque no existe',
+                    })
+                }
 
-            for (let i = 0; i < equipos.length; i++) {
-                if (id === equipos[i].id) {
-                    nombre_equipo = equipos[i].nombre
-                    equipos.splice(i, 1)
+                // Eliminamos el Equipo seleccionado
+                const equipoEliminado = await EquiposModel.findByIdAndDelete(id)
 
-                    for (let o = 0; o < categorias.length; o++) {
-                        for (let u = 0; u < categorias[o].equipos_participantes.length; u++) {
-                            if (categorias[o].equipos_participantes[u] == nombre_equipo) {
-                                categorias[o].equipos_participantes.splice(u, 1)
-                            }
+                const categorias = await CategoriasModel.find().select(
+                    '_id nombre tipo_de_robot premio equipos_participantes modalidad'
+                )
+
+                let elimino = false
+                for (let o = 0; o < categorias.length; o++) {
+                    elimino = false
+                    for (let u = 0; u < categorias[o].equipos_participantes.length; u++) {
+                        if (categorias[o].equipos_participantes[u] == equipoBuscado.nombre) {
+                            categorias[o].equipos_participantes.splice(u, 1)
+                            elimino = true
                         }
                     }
-                    resolve('Se ha eliminado exitosamente el equipo')
-                }
-            }
 
-            reject('No existe un equipo con el id indicado para eliminar')
+                    if (elimino) {
+                        await CategoriasModel.updateOne({ _id: categorias[o]._id }, { $set: { equipos_participantes: categorias[o].equipos_participantes } })
+                    }
+                }
+
+                return resolve ({
+                    ok: true,
+                    equipoEliminado,
+                    mensaje: "Se ha eliminado existosamente el equipo"
+                })
+                
+            } catch (error) {
+                console.error('Error al eliminar el Equipo:', error)
+                return reject({
+                    ok: false,
+                    mensaje: 'Hubo un error al eliminar el Equipo',
+                })
+            }
         })
     }
 
     eliminarCategoria(equipo, id) {
-        return new Promise((resolve, reject) => {
-            let nombre_categoria = ''
-            let nombre_equipo = ''
-
-            for (let i = 0; i < equipos.length; i++) {
-                if (id === equipos[i].id) {
-                    nombre_equipo = equipos[i].nombre
-
-                    for (let a = 0; a < equipos[i].categorias_inscritas.length; a++) {
-                        if (equipos[i].categorias_inscritas[a] == equipo.categoria) {
-                            nombre_categoria = equipos[i].categorias_inscritas[a]
-                            equipos[i].categorias_inscritas.splice(a, 1)
-                        }
-                    }
-
-                    if (nombre_categoria == '') {
-                        reject('No se encontro ninguna categoria registrada en el equipo con ese nombre')
-                    } else {
-
-                        for (let e = 0; e < categorias.length; e++) {
-                            if (categorias[e].nombre == nombre_categoria) {
-
-                                for (let o = 0; o < categorias[e].equipos_participantes.length; o++) {
-                                    if (categorias[e].equipos_participantes[o] == nombre_equipo) {
-                                        categorias[e].equipos_participantes.splice(o, 1)
-                                    }
-                                }
-                            }
-                        }
-
-                        resolve('Se ha eliminado exitosamente el equipo')
-                    }
-
+        return new Promise( async (resolve, reject) => {
+            try {
+                let existe = false
+                if (!equipo.categoria) {
+                    reject('Faltan propiedades escenciales: categoria')
                 }
-            }
 
-            reject('No existe un equipo con el id indicado para eliminar')
+                const equipoBuscado = await EquiposModel.findOne({ _id: id })
+
+                if (!equipoBuscado) {
+                    return reject({
+                        ok: false,
+                        mensaje: 'Hubo un error al eliminar la categoria del equipo porque no existe el equipo',
+                    })
+                }
+
+                for (let a = 0; a < equipoBuscado.categorias_inscritas.length; a++) {
+                    if (equipoBuscado.categorias_inscritas[a] == equipo.categoria) {
+                        equipoBuscado.categorias_inscritas.splice(a, 1)
+                        existe = true
+                    }
+                }
+
+                if (existe == false) {
+                    return reject('No esta registrada esa categoria en el equipo')
+                }
+
+                const categoriaEliminada = await EquiposModel.updateOne({ _id: id }, { $set: { categorias_inscritas: equipoBuscado.categorias_inscritas } })
+
+                const categoriaBuscada = await CategoriasModel.findOne({ nombre: equipo.categoria })
+
+                if (!categoriaBuscada) {
+                    return reject({
+                        ok: false,
+                        mensaje: 'Hubo un error al eliminar la categoria del equipo porque no existe la categoria',
+                    })
+                }
+
+                for (let o = 0; o < categoriaBuscada.equipos_participantes.length; o++) {
+                    if (categoriaBuscada.equipos_participantes[o] == equipoBuscado.nombre) {
+                        categoriaBuscada.equipos_participantes.splice(o, 1)
+                    }
+                }
+
+                await CategoriasModel.updateOne({ nombre: equipo.categoria }, { $set: { equipos_participantes: categoriaBuscada.equipos_participantes } })
+
+                return resolve ( {
+                    ok: true,
+                    categoriaEliminada
+                })
+            } catch (error) {
+                console.error('Error al eliminar el Equipo de una Categoria:', error)
+                return reject({
+                    ok: false,
+                    mensaje: 'Hubo un error al eliminar el Equipo de una Categoria',
+                })
+            }
         })
     }
 }
