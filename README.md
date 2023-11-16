@@ -14,23 +14,23 @@ PORT = 3060
 5) Usar el comando "npx nodemon" o "npm start".
 6) Luego el servidor debe funcionar correctamente y debes utilizar los siguientes endpoints:
 
-- http://localhost:3000/equipos
-- http://localhost:3000/equipos/agregar
-- http://localhost:3000/equipos/eliminar/:id
-- http://localhost:3000/equipos/editar/:id
-- http://localhost:3000/equipos/anular/:id
-- http://localhost:3000/equipos/porCategoria
-- http://localhost:3000/equiposagregar/categoria/:id
+- http://localhost:3000/equipos (GET)
+- http://localhost:3000/equipos/agregar (POST)
+- http://localhost:3000/equipos/eliminar/:id (DELETE)
+- http://localhost:3000/equipos/editar/:id (PUT)
+- http://localhost:3000/equipos/anular/:id (DELETE)
+- http://localhost:3000/equipos/porCategoria (GET)
+- http://localhost:3000/equipos/agregar/categoria/:id (Nueva Funcionalidad) (POST)
 
-- http://localhost:3000/modalidad
-- http://localhost:3000/modalidad/agregar
+- http://localhost:3000/modalidad (GET)
+- http://localhost:3000/modalidad/agregar (POST)
+ 
+- http://localhost:3000/categorias (GET)
+- http://localhost:3000/categorias/agregar (POST)
+- http://localhost:3000/categorias/editar (PUT)
+- http://localhost:3000/categorias/eliminar (DELETE)
 
-- http://localhost:3000/categorias
-- http://localhost:3000/categorias/agregar
-- http://localhost:3000/categorias/editar
-- http://localhost:3000/categorias/eliminar
-
-- http://localhost:3000/patrocinantes
-- http://localhost:3000/patrocinantes/agregar
-- http://localhost:3000/patrocinantes/editar/:id
-- http://localhost:3000/patrocinantes/eliminar/:id
+- http://localhost:3000/patrocinante (GET)
+- http://localhost:3000/patrocinante/agregar (POST)
+- http://localhost:3000/patrocinante/editar/:id (Nueva Funcionalidad) (PUT)
+- http://localhost:3000/patrocinante/eliminar/:id (Nueva Funcionalidad) (DELETE)
