@@ -67,8 +67,9 @@ class Equipo {
                 }
 
                 equipoBuscado.categorias_inscritas.push(equipo.categoria)
+                categoriaBuscada.equipos_participantes.push(equipoBuscado.nombre)
                 await EquiposModel.updateOne({ _id: id }, { $set: { categorias_inscritas: equipoBuscado.categorias_inscritas } })
-                await CategoriasModel.updateOne({ nombre: equipo.categoria }, { $set: { equipos_participantes: equipoBuscado.categorias_inscritas } })
+                await CategoriasModel.updateOne({ nombre: equipo.categoria }, { $set: { equipos_participantes: categoriaBuscada.equipos_participantes } })
 
                 return resolve({
                     ok: true,
