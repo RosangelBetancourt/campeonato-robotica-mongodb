@@ -1,9 +1,14 @@
 var express = require('express');
 var router = express.Router();
-const Modalidades = require('../controller/modalidad.controller')
+const Modalidades = require('../controller/modalidad.controller');
+const checkAutenticacion = require('../controller/service/jwtAuth');
+
 
 /* mostrar las modalidades */
-router.get('/', function (req, res, next) {
+router.get('/', function(req, res, next){
+    roles = ["Admin", "Editor"];
+    checkAutenticacion(req, res, next, roles);
+  }, function (req, res, next) {
     Modalidades.listar()
     .then((resultado) => {
         res.status(200).json({"status": 200, "data": resultado})
@@ -14,7 +19,10 @@ router.get('/', function (req, res, next) {
 });
 
 /* Agregar Modalidades */
-router.post('/agregar', function (req, res, next) {
+router.post('/agregar', function(req, res, next){
+    roles = ["Admin", "Editor"];
+    checkAutenticacion(req, res, next, roles);
+  }, function (req, res, next) {
     Modalidades.agregar(req.body)
     .then((resultado) => {
         res.status(200).json({status: 200, mensaje: resultado})

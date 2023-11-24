@@ -1,9 +1,13 @@
 var express = require('express');
 var router = express.Router();
-const Equipos = require('../controller/equipos.controller')
+const Equipos = require('../controller/equipos.controller');
+const checkAutenticacion = require('../controller/service/jwtAuth');
 
 /* Mostrar equipos participantes */ 
-router.get('/', function (req, res, next) {
+router.get('/', function(req, res, next){
+    roles = ["Admin", "Editor"];
+    checkAutenticacion(req, res, next, roles);
+  }, function (req, res, next) {
     Equipos.listar()
     .then((resultado) => {
         res.status(200).json({"status": 200, "data": resultado})
@@ -14,7 +18,10 @@ router.get('/', function (req, res, next) {
 });
 
 /* Mostrar equipos participantes en cada categoria */ 
-router.get('/porCategoria', function (req, res, next) {
+router.get('/porCategoria', function(req, res, next){
+    roles = ["Admin", "Editor"];
+    checkAutenticacion(req, res, next, roles);
+  }, function (req, res, next) {
     Equipos.listarPorCategoria()
     .then((resultado) => {
         res.status(200).json({"status": 200, "data": resultado})
@@ -25,7 +32,10 @@ router.get('/porCategoria', function (req, res, next) {
 });
 
 /* Agregar Equipos Participantes */
-router.post('/agregar', function (req, res, next) {
+router.post('/agregar', function(req, res, next){
+    roles = ["Admin", "Editor"];
+    checkAutenticacion(req, res, next, roles);
+  }, function (req, res, next) {
     Equipos.agregar(req.body)
     .then((resultado) => {
         res.status(200).json({status: 200, mensaje: resultado})
@@ -36,7 +46,10 @@ router.post('/agregar', function (req, res, next) {
 })
 
 /* Agregar Categoria al Equipos Participantes */
-router.post('/agregar/categoria/:id', function (req, res, next) {
+router.post('/agregar/categoria/:id', function(req, res, next){
+    roles = ["Admin", "Editor"];
+    checkAutenticacion(req, res, next, roles);
+  }, function (req, res, next) {
 
     const { id } = req.params
 
@@ -50,7 +63,10 @@ router.post('/agregar/categoria/:id', function (req, res, next) {
 })
 
 /* Editar Equipos Participantes */
-router.put('/editar/:id', function (req, res, next) {
+router.put('/editar/:id', function(req, res, next){
+    roles = ["Admin", "Editor"];
+    checkAutenticacion(req, res, next, roles);
+  }, function (req, res, next) {
 
     const { id } = req.params
 
@@ -64,7 +80,10 @@ router.put('/editar/:id', function (req, res, next) {
 })
 
 /* Eliminar Equipo Participante */
-router.delete('/eliminar/:id', function (req, res, next) {
+router.delete('/eliminar/:id', function(req, res, next){
+    roles = ["Admin", "Editor"];
+    checkAutenticacion(req, res, next, roles);
+  }, function (req, res, next) {
 
     const { id } = req.params
 
@@ -78,7 +97,10 @@ router.delete('/eliminar/:id', function (req, res, next) {
 })
 
 /* Eliminar Equipo de una categoria */
-router.delete('/anular/:id', function (req, res, next) {
+router.delete('/anular/:id', function(req, res, next){
+    roles = ["Admin", "Editor"];
+    checkAutenticacion(req, res, next, roles);
+  }, function (req, res, next) {
 
     const { id } = req.params
 

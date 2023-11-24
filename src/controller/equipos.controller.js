@@ -43,6 +43,7 @@ class Equipo {
         })
     }
 
+    // Nueva funcionalidad
     agregarCategoria(equipo, id) {
         return new Promise(async (resolve, reject) => {
             if (!equipo.categoria) {

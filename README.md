@@ -8,7 +8,8 @@ Para que el programa funcione debemos hacer los siguientes pasos:
 
 MONGODB_HOST = '127.0.0.1:27017'
 MONGODB_DATABASE = 'campeonato_robotica'
-PORT = 3060
+PORT = 3000
+SECRET = 'clave_secreta'
 
 4) Debemos tener instalada la base de datos MongoDB y tener creada la base de datos  "campeonato_robotica".
 5) Usar el comando "npx nodemon" o "npm start".

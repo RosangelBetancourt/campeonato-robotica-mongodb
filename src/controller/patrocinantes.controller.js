@@ -107,6 +107,7 @@ class Patrocinantes {
         })
     }
 
+    //Nueva funcionalidad o EndPoint
     eliminar(id) {
         return new Promise(async (resolve, reject) => {
             try {

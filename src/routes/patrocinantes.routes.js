@@ -1,9 +1,13 @@
 var express = require('express');
 var router = express.Router();
-const Patrocinantes = require('../controller/patrocinantes.controller')
+const Patrocinantes = require('../controller/patrocinantes.controller');
+const checkAutenticacion = require('../controller/service/jwtAuth');
 
 /* Mostrar patrocinantes */ 
-router.get('/', function (req, res, next) {
+router.get('/', function(req, res, next){
+    roles = ["Admin", "Editor"];
+    checkAutenticacion(req, res, next, roles);
+  }, function (req, res, next) {
     Patrocinantes.listar()
     .then((resultado) => {
         res.status(200).json({"status": 200, "data": resultado, "mensaje": "Se ha listado con éxito los patrocinantes"})
@@ -14,7 +18,10 @@ router.get('/', function (req, res, next) {
 });
 
 /* Agregar patrocinantes */
-router.post('/agregar', function (req, res, next) {
+router.post('/agregar', function(req, res, next){
+    roles = ["Editor"];
+    checkAutenticacion(req, res, next, roles);
+  },  function (req, res, next) {
     Patrocinantes.agregar(req.body)
     .then((resultado) => {
         res.status(200).json({status: 200, mensaje: resultado})
@@ -26,7 +33,10 @@ router.post('/agregar', function (req, res, next) {
 
 /* Editar patrocinantes */
 //Nueva funcionalidad o EndPoint
-router.put('/editar/:id', function (req, res, next) {
+router.put('/editar/:id', function(req, res, next){
+    roles = ["Admin", "Editor"];
+    checkAutenticacion(req, res, next, roles);
+  }, function (req, res, next) {
     const { id } = req.params
 
     Patrocinantes.editar(req.body, id)
@@ -39,7 +49,10 @@ router.put('/editar/:id', function (req, res, next) {
 })
 
 /* Eliminar Patrocinandor */
-router.delete('/eliminar/:id', function (req, res, next) {
+router.delete('/eliminar/:id', function(req, res, next){
+    roles = ["Editor"];
+    checkAutenticacion(req, res, next, roles);
+  },  function (req, res, next) {
 
     const { id } = req.params
 

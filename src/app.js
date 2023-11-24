@@ -10,6 +10,7 @@ const modalidad = require('./routes/modalidad.routes')
 const categorias = require('./routes/categorias.routes')
 const equipos = require('./routes/equipos.routes')
 const patrocinantes = require('./routes/patrocinantes.routes')
+const usuarios = require('./routes/usuarios.routes')
 
 var app = express();
 
@@ -27,6 +28,7 @@ app.use('/modalidad', modalidad)
 app.use('/categorias', categorias)
 app.use('/equipos', equipos)
 app.use('/patrocinante', patrocinantes)
+app.use('/usuarios', usuarios)
 
 // Middleware para manejar rutas no encontradas y devolver error 404
 app.use((req, res, next) => {

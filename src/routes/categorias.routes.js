@@ -1,9 +1,13 @@
 var express = require('express');
 var router = express.Router();
-const Categorias = require('../controller/categorias.controller')
+const Categorias = require('../controller/categorias.controller');
+const checkAutenticacion = require('../controller/service/jwtAuth');
 
 /* Agregar Categorias */
-router.post('/agregar', function (req, res, next) {
+router.post('/agregar', function(req, res, next){
+    roles = ["Editor"];
+    checkAutenticacion(req, res, next, roles);
+  }, function (req, res, next) {
     Categorias.agregar(req.body)
     .then((resultado) => {
         res.status(200).json({status: 200, mensaje: resultado})
@@ -14,7 +18,10 @@ router.post('/agregar', function (req, res, next) {
 })
 
 /* Mostrar Categorias */
-router.get('/', function (req, res, next) {
+router.get('/', function(req, res, next){
+    roles = ["Admin", "Editor"];
+    checkAutenticacion(req, res, next, roles);
+  }, function (req, res, next) {
     Categorias.listar()
     .then((resultado) => {
         res.status(200).json({"status": 200, "data": resultado})
@@ -25,7 +32,10 @@ router.get('/', function (req, res, next) {
 });
 
 /* Editar Categorias */
-router.put('/editar/:id', function (req, res, next) {
+router.put('/editar/:id', function(req, res, next){
+    roles = ["Admin", "Editor"];
+    checkAutenticacion(req, res, next, roles);
+  }, function (req, res, next) {
 
     const { id } = req.params
 
@@ -39,7 +49,10 @@ router.put('/editar/:id', function (req, res, next) {
 })
 
 /* Eliminar Categorias */
-router.delete('/eliminar/:id', function (req, res, next) {
+router.delete('/eliminar/:id', function(req, res, next){
+    roles = ["Editor"];
+    checkAutenticacion(req, res, next, roles);
+  }, function (req, res, next) {
 
     const { id } = req.params
 
